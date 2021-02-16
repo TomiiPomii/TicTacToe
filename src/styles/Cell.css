@@ -5,6 +5,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: default;
 
     font-size: 80px;
     font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;

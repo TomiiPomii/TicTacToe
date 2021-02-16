@@ -14,6 +14,9 @@ export const TicTacToe: React.FC = () => {
   // Symbol was in die Zellen gepackt wird verwalten
   const [player, setPlayer] = useState(1);
 
+  //Ob es einen Sieger gibt
+  const [winner, setWinner] = useState(0);
+
   // Methode um das momentane Symbol zu kriegen, und um es direkt zu Tauschen
   const getPlayer = (): number => {
     // Spieler für momentanen Zug zwichenspeichern
@@ -33,34 +36,49 @@ export const TicTacToe: React.FC = () => {
   ]);
   // If a Symbol changes, it does through this method
   const changeGrid = (row: number, col: number): void => {
-    if (grid[row][col] !== 0) return;
+    console.log(`Row: ${row} Column ${col}`);
+
+    if (grid[row][col] !== 0 || winner !== 0) return;
 
     const tempGrid = grid;
     tempGrid[row][col] = getPlayer();
     setGrid(tempGrid);
+    checkWinner();
   };
 
   // This function checks if there is a winner
-  const checkWinner = (): number => {
+  const checkWinner = (): void => {
     //Horizontal Checking
     for (let row of grid) {
+      if (row[0] === 0) continue;
       const distinctValues = new Set(row);
-      if (distinctValues.size === 1) return row[0];
+      if (distinctValues.size === 1) {
+        setWinner(row[0]);
+        return;
+      }
     }
 
     //Vertical checking
-    for (let i = 0; i < 3; i++) {
-      const distinctValues = new Set([grid[0][i], grid[1][i], grid[2][i]]);
-      if (distinctValues.size === 1) return grid[0][i];
+    for (var i = 0; i < grid[0].length; i++) {
+      if (
+        grid[0][i] === grid[1][i] &&
+        grid[0][i] === grid[2][i] &&
+        grid[0][i] !== 0
+      ) {
+        setWinner(grid[0][i]);
+        return;
+      }
     }
 
     //Diagonal checking
-    if (grid[0][0] === grid[1][1] && grid[0][0] === grid[2][2])
-      return grid[0][0];
-    if (grid[0][2] === grid[1][1] && grid[0][0] === grid[2][0])
-      return grid[0][0];
-
-    return 0;
+    if (grid[0][0] === grid[1][1] && grid[0][0] === grid[2][2]) {
+      setWinner(grid[0][0]);
+      return;
+    }
+    if (grid[0][2] === grid[1][1] && grid[0][2] === grid[2][0]) {
+      setWinner(grid[0][2]);
+      return;
+    }
   };
 
   const resetGame = () => {
@@ -70,13 +88,14 @@ export const TicTacToe: React.FC = () => {
       [0, 0, 0],
     ]);
     setPlayer(1);
+    setWinner(0);
   };
 
   return (
     <div className="container">
       <div className="display">
-        {checkWinner() === 0 && <h2>{convert[player]} is next!</h2>}
-        {checkWinner() !== 0 && <h2>{convert[checkWinner()]} won!</h2>}
+        {winner === 0 && <h2>{convert[player]} is next!</h2>}
+        {winner !== 0 && <h2>{convert[winner]} won!</h2>}
         <button onClick={resetGame}>Start over!</button>
       </div>
       <div className="grid">
